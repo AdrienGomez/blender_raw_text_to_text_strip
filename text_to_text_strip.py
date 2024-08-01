@@ -9,23 +9,26 @@ framerate = bpy.data.scenes['Scene'].render.fps
 wordspermin = (framerate*60)/150
 
 #convert text to a list of sentences
-thesentences = thetext.split(".")
+thesentences = [sentence.strip() + "." for sentence in thetext.split(".") if sentence]
 
 #unse the Frame start as a starting point for text strips)
-stripstart= bpy.data.scenes["Scene"].frame_start
+stripstart= int(bpy.data.scenes["Scene"].frame_start)
+
+print(thesentences)
 
 for sentences in thesentences:
     # define the strip length
-    striplength = wordspermin * len(sentences.split())
+    striplength = int(wordspermin * len(sentences.split()))
     
     #add strips
-    lestrip=bpy.data.scenes['Scene'].sequence_editor.sequences.new_effect(name=sentences, type='TEXT', channel=5, frame_start = int(stripstart), frame_end = int(stripstart+striplength))
+    thestrip=bpy.data.scenes['Scene'].sequence_editor.sequences.new_effect(name=sentences, type='TEXT', channel=5, frame_start = int(stripstart), frame_end = stripstart+striplength)
+    
+    print('frame end: '+str(stripstart+striplength))
     
     #define text for the strip
-    lestrip.text = sentences
+    thestrip.text = sentences
+    thestrip.align_y = 'BOTTOM'
+    thestrip.location[1] = 0.1
     
     #define the next strip frame start
-    stripstart += striplength
-    
-    
-#(name, type, channel, frame_start, frame_end=0, seq1=None, seq2=None, seq3=None)    
+    stripstart += int(striplength)
